@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import {Test, console} from "forge-std/Test.sol";
 import {Num_Complex} from "../src/Complex.sol";
 
-import { SD59x18, sd } from "@prb/math/src/SD59x18.sol";
+import {SD59x18, sd} from "@prb/math/src/SD59x18.sol";
 
 contract CounterTest is Test {
     Num_Complex public num_complex;
@@ -28,7 +28,6 @@ contract CounterTest is Test {
         (SD59x18 resRE, SD59x18 resIM) = num_complex.unwrap(result);
         assertEq(resRE.unwrap(), 2e18);
         assertEq(resIM.unwrap(), 2e18);
-
     }
 
     function test_sub() public {
@@ -94,7 +93,6 @@ contract CounterTest is Test {
         assertEq(resRE.unwrap(), 1e18);
         assertEq(resIM.unwrap(), 2e18);
     }
-
 
     function testFuzz_SetNumber(uint256 x) public {
         // num_complex.setNumber(x);
