@@ -10,10 +10,7 @@ import {SD59x18, sd} from "@prb/math/src/SD59x18.sol";
 import {UD60x18, ud} from "@prb/math/src/UD60x18.sol";
 
 import "./Trigonometry.sol";
-
 import "./Complex.sol";
-
-import "forge-std/console.sol";
 
 contract FastFourierTransform {
     Num_Complex num_complex;

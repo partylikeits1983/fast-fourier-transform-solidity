@@ -1,25 +1,16 @@
-## Foundry
+# Fast Fourier Transform in Solidity
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+## Description
 
-Foundry consists of:
+This repository contains an implementation of the Fast Fourier Transform (FFT) algorithm written in Solidity. The FFT is a fundamental algorithm in digital signal processing.
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+This repository is in development.
 
-## Documentation
+## Features
 
-https://book.getfoundry.sh/
+- **Efficient FFT Algorithm**: Optimized for minimal gas consumption in Ethereum smart contracts.
 
 ## Usage
-
-### Build
-
-```shell
-$ forge build
-```
 
 ### Test
 
@@ -39,23 +30,7 @@ $ forge fmt
 $ forge snapshot
 ```
 
-### Anvil
 
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
 
 ### Help
 
