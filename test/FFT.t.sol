@@ -59,8 +59,8 @@ contract FFTTest is Test {
         input[2] = num_complex.wrap(sd(-1e18), sd(0)); // -1 + 0i
         input[3] = num_complex.wrap(sd(0), sd(-1e18)); // 0 - 1i
 
-        int sampleStep = 1e18;
-        
+        int256 sampleStep = 1e18;
+
         Num_Complex.Complex[] memory output = fft.fft(input, 4, sampleStep);
 
         int256[4] memory expectedRealPart;
