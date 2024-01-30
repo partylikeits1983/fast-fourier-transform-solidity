@@ -2,7 +2,9 @@
 
 ## Description
 
-This repository contains an implementation of the Fast Fourier Transform (FFT) algorithm written in Solidity. The FFT is a fundamental algorithm in digital signal processing.
+This repository presents an implementation of the Fast Fourier Transform (FFT) algorithm written in Solidity, a crucial algorithm in the realm of digital signal processing.
+
+The motivation behind creating this repository emerged from the desire to perform on-chain analysis of Uniswap TWAP (Time-Weighted Average Price) data using the FFT algorithm.
 
 
 ## Features
