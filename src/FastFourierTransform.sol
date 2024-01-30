@@ -12,8 +12,6 @@ import {UD60x18, ud} from "@prb/math/src/UD60x18.sol";
 import "./Trigonometry.sol";
 import "./Complex.sol";
 
-import "forge-std/console.sol";
-
 contract FastFourierTransform is Num_Complex {
     int256 private constant PI = 3141592653589793238;
 
@@ -60,23 +58,15 @@ contract FastFourierTransform is Num_Complex {
 
         Num_Complex.Complex[] memory W = new Num_Complex.Complex[](N / 2);
 
-        // Using fromPolar to initialize W[1] with polar coordinates
         {
             SD59x18 r = sd(1e18); // Radius = 1
             SD59x18 T = sd(PI * -2).div(sd(int256(N) * 1e18)); // Angle = -2 * PI / N
-
             W[1] = fromPolar(r, T);
         }
 
         W[0] = Num_Complex.Complex({re: sd(1e18), im: sd(0)});
 
         for (uint256 i = 2; i < N / 2; i++) {
-            console.log("HERE");
-            console.logInt(W[1].re.unwrap());
-            console.logInt(W[1].im.unwrap());
-
-            console.logInt(int256(i * 1e18));
-
             W[i] = pow(W[1], sd(int256(i * 1e18)));
         }
 
@@ -89,8 +79,8 @@ contract FastFourierTransform is Num_Complex {
                     Num_Complex.Complex memory temp = f[i];
                     Num_Complex.Complex memory Temp = mul(W[(i * a) % (n * a)], f[i + n]);
 
-                    f[i] = add(temp, Temp); // Update with return value
-                    f[i + n] = sub(temp, Temp); // Update with return value
+                    f[i] = add(temp, Temp); 
+                    f[i + n] = sub(temp, Temp); 
                 }
             }
             n *= 2;
