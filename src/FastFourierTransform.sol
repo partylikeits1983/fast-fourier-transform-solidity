@@ -40,7 +40,7 @@ contract FastFourierTransform is Num_Complex {
         return p;
     }
 
-    function ordina(Num_Complex.Complex[] memory f1, uint256 N) internal view {
+    function ordina(Num_Complex.Complex[] memory f1, uint256 N) internal pure {
         require(f1.length >= N, "Array length is less than N");
 
         Num_Complex.Complex[] memory f2 = new Num_Complex.Complex[](N);
@@ -55,7 +55,7 @@ contract FastFourierTransform is Num_Complex {
 
     function transform(Num_Complex.Complex[] memory f, uint256 N)
         internal
-        view
+        pure
         returns (Num_Complex.Complex[] memory)
     {
         ordina(f, N);
@@ -98,7 +98,7 @@ contract FastFourierTransform is Num_Complex {
 
     function fft(Num_Complex.Complex[] memory f, uint256 N, int256 d)
         public
-        view
+        pure
         returns (Num_Complex.Complex[] memory)
     {
         f = transform(f, N);

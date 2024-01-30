@@ -4,7 +4,6 @@
 
 This repository contains an implementation of the Fast Fourier Transform (FFT) algorithm written in Solidity. The FFT is a fundamental algorithm in digital signal processing.
 
-This repository is in development.
 
 ## Features
 
@@ -12,10 +11,18 @@ This repository is in development.
 
 ## Usage
 
+
+
 ### Test
 
 ```shell
-$ forge test
+forge test --match-contract FFTTest -vv
+```
+
+Running Basic FFT in C++
+```shell
+clang++ -o fft cpp/fft.cpp
+./fmt
 ```
 
 ### Format
@@ -30,12 +37,3 @@ $ forge fmt
 $ forge snapshot
 ```
 
-
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```

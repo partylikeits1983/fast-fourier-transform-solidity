@@ -9,8 +9,6 @@ pragma solidity ^0.8.24;
 import {SD59x18, sd} from "@prb/math/src/SD59x18.sol";
 import "./Trigonometry.sol";
 
-import "forge-std/console.sol";
-
 contract Num_Complex {
     /// @notice Complex Type
     /// @dev Elementary Type - unable to use Solidity custom types yet
@@ -119,7 +117,7 @@ contract Num_Complex {
     /// @param r r
     /// @param T theta
     /// @return a Complex number
-    function fromPolar(SD59x18 r, SD59x18 T) public view returns (Complex memory a) {
+    function fromPolar(SD59x18 r, SD59x18 T) public pure returns (Complex memory a) {
         // @dev check if T is negative
         if (T.unwrap() > 0) {
             a.re = (r * sd(Trigonometry.cos(uint256(T.unwrap()))));
@@ -201,7 +199,7 @@ contract Num_Complex {
     /// @dev only works if 0 < re & im
     /// @param a Complex number
     /// @return Complex Number
-    function sqrt(Complex memory a) public view returns (Complex memory) {
+    function sqrt(Complex memory a) public pure returns (Complex memory) {
         Complex memory result;
 
         // if imaginary is 0
@@ -245,7 +243,7 @@ contract Num_Complex {
     /// @dev e^(a + bi) = e^a (cos(b) + i*sin(b))
     /// @param a Complex number
     /// @return Complex Number
-    function exp(Complex memory a) public view returns (Complex memory) {
+    function exp(Complex memory a) public pure returns (Complex memory) {
         SD59x18 r = a.re.exp();
         Complex memory result = fromPolar(r, a.im);
 
