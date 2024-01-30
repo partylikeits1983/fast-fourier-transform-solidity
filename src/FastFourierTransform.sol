@@ -14,8 +14,8 @@ import "./Complex.sol";
 
 import "forge-std/console.sol";
 
-contract FastFourierTransform {
-    Num_Complex num_complex;
+contract FastFourierTransform is Num_Complex {
+    // Num_Complex num_complex;
 
     int256 private constant PI = 3141592653589793238;
 
@@ -53,7 +53,11 @@ contract FastFourierTransform {
         }
     }
 
-    function transform(Num_Complex.Complex[] memory f, uint256 N) internal view {
+    function transform(Num_Complex.Complex[] memory f, uint256 N)
+        internal
+        view
+        returns (Num_Complex.Complex[] memory)
+    {
         ordina(f, N);
 
         Num_Complex.Complex[] memory W = new Num_Complex.Complex[](N / 2);
@@ -61,28 +65,15 @@ contract FastFourierTransform {
         // Using fromPolar to initialize W[1] with polar coordinates
         {
             SD59x18 r = sd(1e18); // Radius = 1
-            // SD59x18 T = sd(-2 * PI) / (sd(int256(N * 1e18))); // Angle = -2 * PI / N
+            SD59x18 T = sd(PI * -2).div(sd(int256(N) * 1e18)); // Angle = -2 * PI / N
 
-            SD59x18 T = sd(PI * -2).div(sd(int(N) * 1e18)); // .div(sd(int(N) * 1e18));
-            // console.log(uint((sd(-2) * sd(PI)).unwrap()));
-            // console.log(uint(sd(int256(N * 1e18)).unwrap()));
-            // console.logInt((sd(PI * -2).div(sd(int(N * 1e18))).unwrap()));
-            // console.log(uint(T.unwrap()));
-            console.log("HERE");
-            console.log(N);
-            console.logInt(sd((int(N)*1e18)).unwrap());
-            console.logInt(sd(PI * -2).div(sd(4e18)).unwrap());
-
-            // overflow :(
-            console.log(uint(T.unwrap()));
-            W[1] = num_complex.fromPolar(r, T);
+            W[1] = fromPolar(r, T);
         }
-        console.log("HERE");
 
-        W[0] = Num_Complex.Complex({re: sd(1e18), im: sd(0)}); // Assuming real numbers are scaled by 1e18 for precision
+        W[0] = Num_Complex.Complex({re: sd(1e18), im: sd(0)});
 
         for (uint256 i = 2; i < N / 2; i++) {
-            W[i] = num_complex.pow(W[1], sd(int256(i * 1e18)));
+            W[i] = pow(W[1], sd(int256(i * 1e18)));
         }
 
         uint256 n = 1;
@@ -92,14 +83,17 @@ contract FastFourierTransform {
             for (uint256 i = 0; i < N; i++) {
                 if ((i & n) == 0) {
                     Num_Complex.Complex memory temp = f[i];
-                    Num_Complex.Complex memory Temp = num_complex.mul(W[(i * a) % (n * a)], f[i + n]); // Assuming multiplyComplex is implemented
-                    f[i] = num_complex.add(temp, Temp);
-                    f[i + n] = num_complex.sub(temp, Temp);
+                    Num_Complex.Complex memory Temp = mul(W[(i * a) % (n * a)], f[i + n]);
+
+                    f[i] = add(temp, Temp); // Update with return value
+                    f[i + n] = sub(temp, Temp); // Update with return value
                 }
             }
             n *= 2;
             a /= 2;
         }
+
+        return f;
     }
 
     function fft(Num_Complex.Complex[] memory f, uint256 N, int256 d)
@@ -107,7 +101,7 @@ contract FastFourierTransform {
         view
         returns (Num_Complex.Complex[] memory)
     {
-        transform(f, N);
+        f = transform(f, N);
 
         for (uint256 i = 0; i < N; i++) {
             f[i].re = f[i].re.mul(sd(d));

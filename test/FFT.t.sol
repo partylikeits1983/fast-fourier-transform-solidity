@@ -52,32 +52,34 @@ contract FFTTest is Test {
         }
     }
 
-    function testFFT() public {
+    function testBasicFFT() public {
         Num_Complex.Complex[] memory input = new Num_Complex.Complex[](4);
         input[0] = num_complex.wrap(sd(1e18), sd(0)); // 1 + 0i
         input[1] = num_complex.wrap(sd(0), sd(1e18)); // 0 + 1i
         input[2] = num_complex.wrap(sd(-1e18), sd(0)); // -1 + 0i
         input[3] = num_complex.wrap(sd(0), sd(-1e18)); // 0 - 1i
-        console.log("HERE");
 
-        console.log(log2(32));
+        int sampleStep = 1e18;
+        
+        Num_Complex.Complex[] memory output = fft.fft(input, 4, sampleStep);
 
-        console.log(reverse(32, 4));
+        int256[4] memory expectedRealPart;
+        int256[4] memory expectedImaginaryPart;
 
-        Num_Complex.Complex[] memory output = fft.fft(input, 4, 1);
+        expectedRealPart[0] = 0;
+        expectedRealPart[1] = 4e18;
+        expectedRealPart[2] = 0;
+        expectedRealPart[3] = 0;
+
+        expectedImaginaryPart[0] = 0;
+        expectedImaginaryPart[1] = 0;
+        expectedImaginaryPart[2] = 0;
+        expectedImaginaryPart[3] = 0;
 
         for (uint256 i = 0; i < 4; i++) {
             (SD59x18 re, SD59x18 im) = num_complex.unwrap(output[i]);
-            // console.log("OUTPUT", re.unwrap());
-            console.logInt(re.unwrap());
-            console.logInt(im.unwrap());
-
-            // Example assertions (you should replace these with actual expected values)
-            // assertEq(re.unwrap(), expectedRealPart[i]);
-            // assertEq(im.unwrap(), expectedImaginaryPart[i]);
+            assertEq(re.unwrap(), expectedRealPart[i]);
+            assertEq(im.unwrap(), expectedImaginaryPart[i]);
         }
     }
-
-    //  int256[4] expectedRealPart = [/* expected real parts */];
-    // int256[4] expectedImaginaryPart = [/* expected imaginary parts */];
 }

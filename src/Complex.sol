@@ -9,6 +9,8 @@ pragma solidity ^0.8.24;
 import {SD59x18, sd} from "@prb/math/src/SD59x18.sol";
 import "./Trigonometry.sol";
 
+import "forge-std/console.sol";
+
 contract Num_Complex {
     /// @notice Complex Type
     /// @dev Elementary Type - unable to use Solidity custom types yet
@@ -37,10 +39,9 @@ contract Num_Complex {
     /// @param b Complex Number
     /// @return Complex Number
     function add(Complex memory a, Complex memory b) public pure returns (Complex memory) {
-        a.re = a.re.add(b.re);
-        a.im = a.im.add(b.im);
+        Complex memory result = Complex({re: a.re.add(b.re), im: a.im.add(b.im)});
 
-        return a;
+        return result;
     }
 
     /// @notice SUBTRACTION
@@ -48,10 +49,9 @@ contract Num_Complex {
     /// @param b Complex number
     /// @return Complex Number
     function sub(Complex memory a, Complex memory b) public pure returns (Complex memory) {
-        a.re = a.re.sub(b.re);
-        a.im = a.im.sub(b.im);
+        Complex memory result = Complex({re: a.re.sub(b.re), im: a.im.sub(b.im)});
 
-        return a;
+        return result;
     }
 
     /// @notice MULTIPLICATION
@@ -64,13 +64,9 @@ contract Num_Complex {
         SD59x18 _c = a.im * b.re;
         SD59x18 _d = a.re * b.im;
 
-        a.re = _a - _b;
-        a.im = _c + _d;
+        Complex memory result = Complex({re: _a - _b, im: _c + _d});
 
-        // a.re /= 1e18;
-        // a.im /= 1e18;
-
-        return a;
+        return result;
     }
 
     /// @notice DIVISION
@@ -79,13 +75,12 @@ contract Num_Complex {
     /// @return Complex Number
     function div(Complex memory a, Complex memory b) public pure returns (Complex memory) {
         SD59x18 numA = a.re * b.re + a.im * b.im;
-        SD59x18 den = b.re.pow(sd(2e18)) + b.im.pow(sd(2e18));
         SD59x18 numB = a.im * b.re - a.re * b.im;
+        SD59x18 den = b.re.pow(sd(2e18)) + b.im.pow(sd(2e18));
 
-        a.re = numA.div(den);
-        b.im = numB.div(den);
+        Complex memory result = Complex({re: numA.div(den), im: numB.div(den)});
 
-        return a;
+        return result;
     }
 
     /// @notice CALCULATE HYPOTENUSE
@@ -124,13 +119,13 @@ contract Num_Complex {
     /// @param r r
     /// @param T theta
     /// @return a Complex number
-    function fromPolar(SD59x18 r, SD59x18 T) public pure returns (Complex memory a) {
+    function fromPolar(SD59x18 r, SD59x18 T) public view returns (Complex memory a) {
         // @dev check if T is negative
         if (T.unwrap() > 0) {
             a.re = (r * sd(Trigonometry.cos(uint256(T.unwrap()))));
             a.im = (r * sd(Trigonometry.sin(uint256(T.unwrap()))));
         } else {
-            a.re = (r * sd(Trigonometry.cos(uint256(T.unwrap()))));
+            a.re = -(r * sd(Trigonometry.cos(uint256(-T.unwrap()))));
             a.im = -(r * sd(Trigonometry.sin(uint256(-T.unwrap()))));
         }
 
@@ -206,54 +201,55 @@ contract Num_Complex {
     /// @dev only works if 0 < re & im
     /// @param a Complex number
     /// @return Complex Number
-    function sqrt(Complex memory a) public pure returns (Complex memory) {
+    function sqrt(Complex memory a) public view returns (Complex memory) {
+        Complex memory result;
+
         // if imaginary is 0
         if (a.im.unwrap() == 0) {
             // if real is positive
             if (a.re.unwrap() > 0) {
                 // simple positive real √r, and copy `im` for its sign
-                a.re = a.re.sqrt();
+                result = Complex({re: a.re.sqrt(), im: sd(0)});
             } else {
                 // if real is negative
                 // √(r e^(iπ)) = √r e^(iπ/2) = i√r
                 // √(r e^(-iπ)) = √r e^(-iπ/2) = -i√r
-                // if real is negative
-                a.im = -a.re.sqrt();
+                SD59x18 sqrtVal = -a.re.sqrt();
                 // if imaginary is positive
                 if (a.im.unwrap() > 0) {
-                    a.re = sd(0);
+                    result = Complex({re: sd(0), im: sqrtVal});
                 } else {
                     // if imaginary is negative
-                    a.im = -a.im;
+                    result = Complex({re: sd(0), im: -sqrtVal});
                 }
             }
         } else if (a.re.unwrap() == 0) {
             // √(r e^(iπ/2)) = √r e^(iπ/4) = √(r/2) + i√(r/2)
-            // √(r e^(-iπ/2)) = √r e^(-iπ/4) = √(r/2) - i√(r/2
-            a.re = (a.im.abs() / sd(2e18)).sqrt();
-            if (a.re.unwrap() > 0) {
-                a.im = a.re;
+            // √(r e^(-iπ/2)) = √r e^(-iπ/4) = √(r/2) - i√(r/2)
+            SD59x18 sqrtPart = (a.im.abs() / sd(2e18)).sqrt();
+            if (a.im.unwrap() > 0) {
+                result = Complex({re: sqrtPart, im: sqrtPart});
             } else {
-                a.im = -a.re;
+                result = Complex({re: sqrtPart, im: -sqrtPart});
             }
         } else {
             // formula: sqrt(r e^(it)) = sqrt(r) e^(it/2)
             (SD59x18 r, SD59x18 T) = toPolar(a);
-            a = fromPolar(r.sqrt(), T.div(sd(2e18)));
+            result = fromPolar(r.sqrt(), T.div(sd(2e18)));
         }
 
-        return a;
+        return result;
     }
 
     /// @notice COMPLEX EXPONENTIAL
     /// @dev e^(a + bi) = e^a (cos(b) + i*sin(b))
     /// @param a Complex number
     /// @return Complex Number
-    function exp(Complex memory a) public pure returns (Complex memory) {
+    function exp(Complex memory a) public view returns (Complex memory) {
         SD59x18 r = a.re.exp();
-        a = fromPolar(r, a.im);
+        Complex memory result = fromPolar(r, a.im);
 
-        return a;
+        return result;
     }
 
     /// @notice COMPLEX POWER
@@ -269,9 +265,11 @@ contract Num_Complex {
         SD59x18 rTOn = r.pow(n);
         SD59x18 nTheta = n * theta;
 
-        a.re = rTOn * sd(Trigonometry.cos(uint256(nTheta.unwrap())));
-        a.im = rTOn * sd(Trigonometry.sin(uint256(nTheta.unwrap())));
+        Complex memory result = Complex({
+            re: rTOn * sd(Trigonometry.cos(uint256(nTheta.unwrap()))),
+            im: rTOn * sd(Trigonometry.sin(uint256(nTheta.unwrap())))
+        });
 
-        return a;
+        return result;
     }
 }
