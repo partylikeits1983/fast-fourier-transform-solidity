@@ -53,7 +53,7 @@ contract FastFourierTransform is Num_Complex {
 
     function transform(Num_Complex.Complex[] memory f, uint256 N)
         internal
-        pure
+        view
         returns (Num_Complex.Complex[] memory)
     {
         ordina(f, N);
@@ -71,6 +71,12 @@ contract FastFourierTransform is Num_Complex {
         W[0] = Num_Complex.Complex({re: sd(1e18), im: sd(0)});
 
         for (uint256 i = 2; i < N / 2; i++) {
+            console.log("HERE");
+            console.logInt(W[1].re.unwrap());
+            console.logInt(W[1].im.unwrap());
+
+            console.logInt(int256(i * 1e18));
+
             W[i] = pow(W[1], sd(int256(i * 1e18)));
         }
 
@@ -96,7 +102,7 @@ contract FastFourierTransform is Num_Complex {
 
     function fft(Num_Complex.Complex[] memory f, uint256 N, int256 d)
         public
-        pure
+        view
         returns (Num_Complex.Complex[] memory)
     {
         f = transform(f, N);

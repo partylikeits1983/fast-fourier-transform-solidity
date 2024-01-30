@@ -82,4 +82,28 @@ contract FFTTest is Test {
             assertEq(im.unwrap(), expectedImaginaryPart[i]);
         }
     }
+
+    /*     function testExtendedFFT() public view {
+        uint256 size = 8;
+
+        Num_Complex.Complex[] memory input = new Num_Complex.Complex[](size);
+        for (uint256 i = 0; i < size; i++) {
+            uint256 number = 100;
+            input[i] = num_complex.wrap(sd(int256(number * 1e18)), sd(0));
+        }
+
+        for (uint256 i = 0; i < size; i++) {
+            console.log(uint256(input[i].re.unwrap()));
+        }
+
+        int256 sampleStep = 1e18;
+
+        Num_Complex.Complex[] memory output = fft.fft(input, size, sampleStep);
+
+        for (uint256 i = 0; i < size; i++) {
+            (SD59x18 re, SD59x18 im) = num_complex.unwrap(output[i]);
+            console.logInt(re.unwrap());
+            console.logInt(im.unwrap());
+        }
+    } */
 }
