@@ -15,8 +15,6 @@ import "./Complex.sol";
 import "forge-std/console.sol";
 
 contract FastFourierTransform is Num_Complex {
-    // Num_Complex num_complex;
-
     int256 private constant PI = 3141592653589793238;
 
     function log2(uint256 N) internal pure returns (uint256) {
